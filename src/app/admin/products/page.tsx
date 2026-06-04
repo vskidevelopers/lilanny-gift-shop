@@ -11,6 +11,7 @@ import { deleteProduct } from "@/lib/supabase/admin-actions"
 
 export default async function ProductsPage() {
     const products = await getProducts().catch(() => [])
+    console.log("Fetched products for admin:", products)
 
     return (
         <div className="space-y-6">

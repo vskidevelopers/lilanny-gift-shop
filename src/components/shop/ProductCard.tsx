@@ -33,6 +33,7 @@ export function ProductCard({ product, viewMode = "grid" }: { product: Product; 
                             fill
                             className="object-cover group-hover:scale-105 transition-transform duration-300"
                             sizes="(max-width: 640px) 100vw, 192px"
+                            unoptimized
                         />
                         {isOnSale && (
                             <Badge className="absolute top-2 left-2 bg-red-500 hover:bg-red-600">-{discount}%</Badge>
@@ -40,7 +41,7 @@ export function ProductCard({ product, viewMode = "grid" }: { product: Product; 
                     </div>
                     <CardContent className="p-4 flex-1 flex flex-col justify-between">
                         <div>
-                            <Link href={`/product/${product.slug}`} className="hover:text-primary transition-colors">
+                            <Link href={`/shop/${product.slug}`} className="hover:text-primary transition-colors">
                                 <h3 className="font-semibold text-lg line-clamp-2">{product.name}</h3>
                             </Link>
                             {product.category?.name && (
@@ -99,13 +100,13 @@ export function ProductCard({ product, viewMode = "grid" }: { product: Product; 
                     className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 shadow-lg"
                     asChild
                 >
-                    <Link href={`/product/${product.slug}`}>
+                    <Link href={`/shop/${product.slug}`}>
                         <Eye className="h-4 w-4 mr-1" /> Quick View
                     </Link>
                 </Button>
             </div>
             <CardContent className="p-4">
-                <Link href={`/product/${product.slug}`} className="hover:text-primary transition-colors block">
+                <Link href={`/shop/${product.slug}`} className="hover:text-primary transition-colors block">
                     <h3 className="font-medium line-clamp-2 min-h-[48px]">{product.name}</h3>
                 </Link>
                 {product.category?.name && (

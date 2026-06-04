@@ -63,7 +63,7 @@ export function PageHeader({
             {/* Gradient Overlay */}
             <div className={cn(
                 "absolute inset-0",
-                backgroundImage && "bg-gradient-to-t from-background/90 via-background/50 to-transparent"
+                backgroundImage && "bg-linear-to-t from-background/90 via-background/50 to-transparent bg-black/10"
             )} />
 
             <div className="container px-4 relative z-10">

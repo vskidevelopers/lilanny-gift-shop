@@ -33,6 +33,10 @@ export function ProductForm({ categories, initialData }: { categories: any[], in
         formData.set("images", uploadedImageUrls.join(","))
 
         setLoading(true)
+        console.log("Submitting product form with data:")
+        formData.forEach((value, key) => {
+            console.log(`${key}: ${value}`)
+        })
         const res = await upsertProduct(formData)
         setLoading(false)
         if (res.error) {
@@ -40,6 +44,9 @@ export function ProductForm({ categories, initialData }: { categories: any[], in
             console.log("Upsert product response >>>", res)
         } else {
             toast.success(isEdit ? "Product updated" : "Product created")
+            if (!isEdit) {
+                setUploadedImageUrls([])
+            }
         }
     }
 

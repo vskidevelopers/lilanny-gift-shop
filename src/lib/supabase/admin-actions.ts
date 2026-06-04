@@ -87,7 +87,7 @@ export async function upsertProduct(formData: FormData) {
     category_id: categoryId,
     tags,
     images,
-    is_active: formData.get("is_active") === "true",
+    is_active: "true",
   };
 
   const { error } = await adminDb.from("products").upsert(productData, {
@@ -104,5 +104,38 @@ export async function deleteProduct(id: string) {
   const { error } = await adminDb.from("products").delete().eq("id", id);
   if (error) return { error: error.message };
   revalidatePath("/admin/products");
+  return { success: true };
+}
+
+// --- ORDERS ---
+export async function getOrders() {
+  const { data, error } = await adminDb
+    .from("orders")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data;
+}
+
+export async function updateOrderStatus(
+  orderId: string,
+  paymentStatus?: string,
+  fulfillmentStatus?: string,
+) {
+  const updateData: any = {};
+  if (paymentStatus) updateData.payment_status = paymentStatus;
+  if (fulfillmentStatus) updateData.fulfillment_status = fulfillmentStatus;
+
+  if (Object.keys(updateData).length === 0)
+    return { error: "No status provided" };
+
+  const { error } = await adminDb
+    .from("orders")
+    .update(updateData)
+    .eq("id", orderId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/orders");
   return { success: true };
 }
