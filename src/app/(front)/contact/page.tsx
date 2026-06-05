@@ -54,14 +54,14 @@ export default function ContactPage() {
         toast.success("Message sent! We'll get back to you soon.")
 
         // Open WhatsApp in new tab
-        window.open(`https://wa.me/254791242021?text=${whatsappMessage}`, "_blank")
+        window.open(`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER}?text=${whatsappMessage}`, "_blank")
     }
 
     const handleWhatsAppClick = () => {
         const message = encodeURIComponent(
             "Hello Li & Lanny Trends! 👋 I have a question about your products."
         )
-        window.open(`https://wa.me/254791242021?text=${message}`, "_blank")
+        window.open(`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER}?text=${message}`, "_blank")
     }
 
     return (
@@ -95,7 +95,7 @@ export default function ContactPage() {
                                         <p className="text-sm text-muted-foreground mb-3">
                                             Fastest way to reach us
                                         </p>
-                                        <p className="font-mono text-sm font-medium">0791 242 021</p>
+                                        <p className="font-mono text-sm font-medium">0706 870 465</p>
                                     </div>
                                     <Button
                                         className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white gap-2"
@@ -125,7 +125,7 @@ export default function ContactPage() {
                                         <p className="text-sm text-muted-foreground mb-3">
                                             Mon-Sat, 9am-6pm
                                         </p>
-                                        <p className="font-mono text-sm font-medium">0791 242 021</p>
+                                        <p className="font-mono text-sm font-medium">0706 870 465</p>
                                     </div>
                                     <Button className="w-full gap-2" variant="outline" asChild>
                                         <a href="tel:+254791242021">

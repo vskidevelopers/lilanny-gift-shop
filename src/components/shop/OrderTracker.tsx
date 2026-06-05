@@ -126,7 +126,7 @@ export function OrderTracker() {
         }
     }
 
-    const whatsappNumber = "254791242021"
+    const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER!
     const whatsappMessage = encodeURIComponent(
         order
             ? `Hello Li & Lanny Trends! 👋 I'm checking on my order ${order.id}. Can you help me with the latest status? Thank you!`
@@ -307,10 +307,10 @@ export function OrderTracker() {
                                                             animate={{ scale: 1 }}
                                                             transition={{ delay: idx * 0.1 }}
                                                             className={`relative z-10 flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center ${isCompleted
-                                                                    ? "bg-primary text-primary-foreground"
-                                                                    : isCurrent
-                                                                        ? "bg-primary/20 text-primary ring-4 ring-primary/20"
-                                                                        : "bg-muted text-muted-foreground"
+                                                                ? "bg-primary text-primary-foreground"
+                                                                : isCurrent
+                                                                    ? "bg-primary/20 text-primary ring-4 ring-primary/20"
+                                                                    : "bg-muted text-muted-foreground"
                                                                 }`}
                                                         >
                                                             {isCompleted ? (

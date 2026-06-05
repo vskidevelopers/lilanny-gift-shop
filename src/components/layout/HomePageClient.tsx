@@ -20,6 +20,7 @@ interface Product {
 export function HomePageClient({ products }: { products: Product[] }) {
     const containerRef = useRef<HTMLDivElement>(null)
     const { scrollY } = useScroll()
+    const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER!
 
     // Parallax transforms
     const heroY = useTransform(scrollY, [0, 300], [0, 100])
@@ -161,7 +162,7 @@ export function HomePageClient({ products }: { products: Product[] }) {
                             Chat with us on WhatsApp. We&apos;ll help you find the perfect gift in minutes.
                         </p>
                         <Button size="lg" variant="secondary" className="gap-2" asChild>
-                            <a href="https://wa.me/254791242021" target="_blank" rel="noopener noreferrer">
+                            <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noopener noreferrer">
                                 Chat on WhatsApp
                             </a>
                         </Button>
