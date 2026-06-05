@@ -14,25 +14,29 @@ export async function getCategories() {
   if (error) throw error;
   return data;
 }
-
 export async function upsertCategory(formData: FormData) {
   const name = formData.get("name") as string;
   if (!name?.trim()) return { error: "Name is required" };
 
   const slug = slugify(name, { lower: true, strict: true });
-  const { error } = await adminDb.from("categories").upsert(
-    {
-      name,
-      slug,
-      description: (formData.get("description") as string) || null,
-      image_url: (formData.get("image_url") as string) || null,
-    },
-    { onConflict: "slug" },
-  );
+  const { data, error } = await adminDb
+    .from("categories")
+    .upsert(
+      {
+        name,
+        slug,
+        description: (formData.get("description") as string) || null,
+        image_url: (formData.get("image_url") as string) || null,
+      },
+      { onConflict: "slug" },
+    )
+    .select()
+    .single();
 
   if (error) return { error: error.message };
+
   revalidatePath("/admin/categories");
-  return { success: true };
+  return { success: true, category: data };
 }
 
 export async function deleteCategory(id: string) {
