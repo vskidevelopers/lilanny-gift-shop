@@ -13,7 +13,6 @@ import {
     Search,
     Loader2,
     CheckCircle2,
-    Circle,
     Clock,
     XCircle,
     Truck,
@@ -21,13 +20,16 @@ import {
     MessageCircle,
     RotateCcw,
     ShoppingBag,
+    CreditCard,
 } from "lucide-react"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 
 interface Order {
     id: string
-    status: string
+    payment_status: string
+    fulfillment_status: string
+    payment_method: string
     fulfillment_method: string
     total_amount: number
     amount_paid: number
@@ -85,7 +87,7 @@ export function OrderTracker() {
     }
 
     // Timeline steps based on fulfillment_status
-    const getTimelineSteps = (status: string) => {
+    const getTimelineSteps = (fulfillmentStatus: string) => {
         const steps = [
             { key: "pending", label: "Order Placed", desc: "We've received your order", icon: Package },
             { key: "processing", label: "Processing", desc: "We're preparing your gift", icon: Clock },
@@ -94,16 +96,36 @@ export function OrderTracker() {
         ]
 
         const statusOrder = ["pending", "processing", "shipped", "delivered"]
-        const currentIndex = statusOrder.indexOf(status)
+        const currentIndex = statusOrder.indexOf(fulfillmentStatus)
 
-        if (status === "cancelled") {
+        if (fulfillmentStatus === "cancelled") {
             return { steps, currentIndex: -1, cancelled: true }
         }
 
         return { steps, currentIndex, cancelled: false }
     }
 
-    // WhatsApp message for this specific order
+    // Format payment method for display
+    const formatPaymentMethod = (method: string) => {
+        if (method === "pay_now") return "Pay Now (M-Pesa STK)"
+        if (method === "pay_later") return "Pay Later"
+        return method
+    }
+
+    // Get payment status badge
+    const getPaymentStatusBadge = (status: string) => {
+        switch (status) {
+            case "paid":
+                return <Badge className="bg-green-500/10 text-green-600 border-green-500/20">Paid</Badge>
+            case "pending":
+                return <Badge className="bg-yellow-500/10 text-yellow-600 border-yellow-500/20">Pending Payment</Badge>
+            case "failed":
+                return <Badge className="bg-red-500/10 text-red-600 border-red-500/20">Payment Failed</Badge>
+            default:
+                return <Badge variant="outline">{status}</Badge>
+        }
+    }
+
     const whatsappNumber = "254791242021"
     const whatsappMessage = encodeURIComponent(
         order
@@ -192,7 +214,6 @@ export function OrderTracker() {
                             </CardContent>
                         </Card>
 
-                        {/* Helpful tips */}
                         <Card className="bg-muted/30 border-dashed">
                             <CardContent className="p-6 space-y-3">
                                 <h4 className="font-medium text-sm flex items-center gap-2">
@@ -215,7 +236,6 @@ export function OrderTracker() {
                         exit={{ opacity: 0, y: -20 }}
                         className="space-y-6"
                     >
-                        {/* Order Header */}
                         <Card className="overflow-hidden">
                             <div className="bg-gradient-to-br from-primary/10 to-accent/10 p-6 border-b">
                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -230,6 +250,9 @@ export function OrderTracker() {
                                                 year: "numeric",
                                             })}
                                         </p>
+                                        <div className="mt-3">
+                                            {getPaymentStatusBadge(order.payment_status)}
+                                        </div>
                                     </div>
                                     <Button variant="outline" size="sm" onClick={handleReset} className="w-fit">
                                         <RotateCcw className="h-4 w-4 mr-2" />
@@ -239,9 +262,8 @@ export function OrderTracker() {
                             </div>
 
                             <CardContent className="p-6">
-                                {/* Timeline */}
                                 {(() => {
-                                    const { steps, currentIndex, cancelled } = getTimelineSteps(order.status)
+                                    const { steps, currentIndex, cancelled } = getTimelineSteps(order.fulfillment_status)
 
                                     if (cancelled) {
                                         return (
@@ -273,7 +295,6 @@ export function OrderTracker() {
 
                                                 return (
                                                     <div key={step.key} className="flex gap-4 relative">
-                                                        {/* Vertical Line */}
                                                         {idx < steps.length - 1 && (
                                                             <div
                                                                 className={`absolute left-5 top-10 w-0.5 h-full -translate-x-1/2 ${isCompleted ? "bg-primary" : "bg-muted-foreground/20"
@@ -281,16 +302,15 @@ export function OrderTracker() {
                                                             />
                                                         )}
 
-                                                        {/* Icon */}
                                                         <motion.div
                                                             initial={{ scale: 0 }}
                                                             animate={{ scale: 1 }}
                                                             transition={{ delay: idx * 0.1 }}
                                                             className={`relative z-10 flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center ${isCompleted
-                                                                ? "bg-primary text-primary-foreground"
-                                                                : isCurrent
-                                                                    ? "bg-primary/20 text-primary ring-4 ring-primary/20"
-                                                                    : "bg-muted text-muted-foreground"
+                                                                    ? "bg-primary text-primary-foreground"
+                                                                    : isCurrent
+                                                                        ? "bg-primary/20 text-primary ring-4 ring-primary/20"
+                                                                        : "bg-muted text-muted-foreground"
                                                                 }`}
                                                         >
                                                             {isCompleted ? (
@@ -300,7 +320,6 @@ export function OrderTracker() {
                                                             )}
                                                         </motion.div>
 
-                                                        {/* Content */}
                                                         <div className="flex-1 pb-8">
                                                             <motion.div
                                                                 initial={{ opacity: 0, x: -10 }}
@@ -330,7 +349,6 @@ export function OrderTracker() {
                             </CardContent>
                         </Card>
 
-                        {/* Order Details */}
                         <Card>
                             <CardHeader>
                                 <CardTitle className="text-lg flex items-center gap-2">
@@ -339,20 +357,19 @@ export function OrderTracker() {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                {/* Customer Info */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                                    <div className="flex items-start gap-2">
+                                        <CreditCard className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                                        <div>
+                                            <p className="text-muted-foreground text-xs uppercase">Payment Method</p>
+                                            <p className="font-medium">{formatPaymentMethod(order.payment_method)}</p>
+                                        </div>
+                                    </div>
                                     <div className="flex items-start gap-2">
                                         <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                                         <div>
                                             <p className="text-muted-foreground text-xs uppercase">Delivery Location</p>
                                             <p className="font-medium">{order.location}</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-start gap-2">
-                                        <Truck className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                                        <div>
-                                            <p className="text-muted-foreground text-xs uppercase">Fulfillment Method</p>
-                                            <p className="font-medium capitalize">{order.fulfillment_method}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -366,7 +383,6 @@ export function OrderTracker() {
 
                                 <Separator />
 
-                                {/* Items */}
                                 <div className="space-y-3">
                                     <h4 className="font-medium text-sm">Items in your order</h4>
                                     {order.order_items.map((item: any, idx: number) => {
@@ -403,7 +419,6 @@ export function OrderTracker() {
 
                                 <Separator />
 
-                                {/* Total */}
                                 <div className="flex justify-between items-center pt-2">
                                     <span className="text-lg font-bold">Total</span>
                                     <span className="text-2xl font-bold text-primary">
@@ -413,7 +428,6 @@ export function OrderTracker() {
                             </CardContent>
                         </Card>
 
-                        {/* WhatsApp CTA */}
                         <Card className="bg-gradient-to-br from-[#25D366]/10 to-[#25D366]/5 border-[#25D366]/20">
                             <CardContent className="p-6 text-center space-y-4">
                                 <div className="h-12 w-12 rounded-full bg-[#25D366]/20 flex items-center justify-center mx-auto">
