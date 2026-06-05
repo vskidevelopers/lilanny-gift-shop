@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
@@ -13,6 +12,7 @@ import { upsertCategory, upsertProduct } from "@/lib/supabase/admin-actions"
 import { toast } from "sonner"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { ImageUploader } from "./ImageUploader"
+import { RichTextEditor } from "./RichTextEditor"
 
 export function ProductForm({ categories, initialData }: { categories: any[], initialData?: any }) {
     const [loading, setLoading] = useState(false)
@@ -27,10 +27,16 @@ export function ProductForm({ categories, initialData }: { categories: any[], in
     // Image upload state
     const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>(initialData?.images || [])
 
+    // ✅ Rich text editor state
+    const [description, setDescription] = useState(initialData?.description || "")
+
     const handleSubmit = async (formData: FormData) => {
         if (isEdit) formData.set("id", initialData.id)
         // Attach uploaded image URLs to form data
         formData.set("images", uploadedImageUrls.join(","))
+
+        // ✅ Attach rich text description
+        formData.set("description", description)
 
         setLoading(true)
         console.log("Submitting product form with data:")
@@ -46,6 +52,7 @@ export function ProductForm({ categories, initialData }: { categories: any[], in
             toast.success(isEdit ? "Product updated" : "Product created")
             if (!isEdit) {
                 setUploadedImageUrls([])
+                setDescription("") // ✅ Clear description on new product
             }
         }
     }
@@ -132,9 +139,17 @@ export function ProductForm({ categories, initialData }: { categories: any[], in
                             </div>
                         </div>
 
+                        {/* ✅ Rich Text Editor */}
                         <div className="space-y-2">
-                            <Label htmlFor="description">Description</Label>
-                            <Textarea id="description" name="description" defaultValue={initialData?.description || ""} rows={3} placeholder="Describe the product, materials, age range, etc." />
+                            <Label>Product Description</Label>
+                            <RichTextEditor
+                                value={description}
+                                onChange={setDescription}
+                                placeholder="Describe the product, materials, age range, features, etc."
+                            />
+                            <p className="text-xs text-muted-foreground">
+                                Use the toolbar to format your description with headings, lists, and emphasis.
+                            </p>
                         </div>
 
                         <div className="space-y-2">
@@ -147,7 +162,7 @@ export function ProductForm({ categories, initialData }: { categories: any[], in
 
                 <Separator />
 
-                {/* 💰 PRICING SECTION */}
+                {/*  PRICING SECTION */}
                 <section className="space-y-4">
                     <CardHeader className="pb-3">
                         <CardTitle className="text-lg flex items-center gap-2">
@@ -171,7 +186,7 @@ export function ProductForm({ categories, initialData }: { categories: any[], in
 
                 <Separator />
 
-                {/* ⚙️ VISIBILITY */}
+                {/*  VISIBILITY */}
                 <section className="px-6 pb-6">
                     <div className="flex items-center justify-between">
                         <div className="space-y-0.5">
@@ -182,7 +197,7 @@ export function ProductForm({ categories, initialData }: { categories: any[], in
                     </div>
                 </section>
 
-                {/* ✅ ACTIONS */}
+                {/* ACTIONS */}
                 <div className="border-t px-6 py-4 flex justify-end gap-3 bg-muted/30">
                     <Button type="button" variant="outline" onClick={() => window.history.back()}>Cancel</Button>
                     <Button type="submit" disabled={loading}>

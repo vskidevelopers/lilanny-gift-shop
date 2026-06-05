@@ -109,11 +109,15 @@ export function ProductDetails({ product }: { product: Product }) {
                 </div>
             )}
 
-            {/* Description */}
+            {/* Description - Rich Text HTML */}
             {product.description && (
-                <div className="prose prose-sm max-w-none text-muted-foreground">
-                    <p>{product.description}</p>
-                </div>
+                <div
+                    className="prose prose-sm sm:prose-base max-w-none text-muted-foreground 
+                               prose-headings:text-foreground prose-strong:text-foreground
+                               prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+                               prose-li:marker:text-primary"
+                    dangerouslySetInnerHTML={{ __html: product.description }}
+                />
             )}
 
             {/* Trust Badges */}

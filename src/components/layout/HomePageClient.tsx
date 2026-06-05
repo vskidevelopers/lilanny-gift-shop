@@ -61,7 +61,7 @@ export function HomePageClient({ products }: { products: Product[] }) {
                         transition={{ duration: 0.6, ease: "easeOut" }}
                         className="max-w-3xl mx-auto"
                     >
-                        <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
+                        <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/70 text-white text-sm font-medium mb-6">
                             <Sparkles className="h-3 w-3" /> New Arrivals Just Dropped
                         </span>
                         <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 text-white">
