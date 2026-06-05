@@ -11,9 +11,14 @@ import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, ArrowLeft, Tag } from "lu
 import { motion, AnimatePresence } from "framer-motion"
 
 export default function CartPage() {
-    const { items, subtotal, updateQuantity, removeItem } = useCartStore()
+    const { items, updateQuantity, removeItem } = useCartStore()
     const [promoCode, setPromoCode] = useState("")
     const [applyingPromo, setApplyingPromo] = useState(false)
+
+    const subtotal = items.reduce((total, item) => {
+        const price = item.sale_price && item.sale_price < item.price ? item.sale_price : item.price
+        return total + price * item.quantity
+    }, 0)
 
     // Empty State
     if (items.length === 0) {
